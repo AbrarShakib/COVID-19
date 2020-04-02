@@ -28,9 +28,10 @@ for n=1:countrynum
             result(dummy1,m)={dummy3};
         end
     end
-    date=-1;
+     %For starting from 1/22/20 (date= -1)
     increment=6;
     loopcount=floor((shape1(1,2)-4)/6);
+    date=(shape1(1,2)-loopcount*increment)-increment;
     for i=1:loopcount
         date=date+increment;
         newcasesinaweek=str2double(table2array(result(country1,date:date+increment)));
@@ -52,6 +53,11 @@ for n=1:countrynum
     indicator=append(indicator2,indicator1);
     text(totalcasesinaweek(loopcount),averagenewcasesinaweek(loopcount),indicator,'FontSize',12)
     hold on
+    length3=length(averagenewcasesinaweek);
+    growthrate=averagenewcasesinaweek(length3)/averagenewcasesinaweek(length3-1);
+    growthratedisplay=append('Growth Rate of ',indicator1);
+    disp(growthratedisplay)
+    disp(growthrate)
     state=0;
 end
 title('COVID 19 Country Analysis in log scale','FontSize', 24)
