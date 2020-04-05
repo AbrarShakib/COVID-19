@@ -23,20 +23,19 @@ for n=1:countrynum
         end
     end
     if state>1
-        for m=5:shape1(1,2)-4
+        for m=5:shape1(1,2)
             dummy3=char(string(sum(str2double(table2array(result(dummy1:dummy2,m))))));
             result(dummy1,m)={dummy3};
         end
     end
-     %For starting from 1/22/20 (date= -1)
     increment=6;
     loopcount=floor((shape1(1,2)-4)/6);
     date=(shape1(1,2)-loopcount*increment)-increment;
     for i=1:loopcount
         date=date+increment;
         newcasesinaweek=str2double(table2array(result(country1,date:date+increment)));
-        totalcasesinaweek(1,i)=sum(newcasesinaweek);
-        averagenewcasesinaweek(1,i)=sum(newcasesinaweek)/7;
+        totalcasesinaweek(1,i)=newcasesinaweek(7)-newcasesinaweek(1);
+        averagenewcasesinaweek(1,i)=(newcasesinaweek(7)-newcasesinaweek(1))/7;
     end
     length2=length(totalcasesinaweek);
     for i=1:length2-1
@@ -55,11 +54,12 @@ for n=1:countrynum
     hold on
     length3=length(averagenewcasesinaweek);
     growthrate=averagenewcasesinaweek(length3)/averagenewcasesinaweek(length3-1);
-    growthratedisplay=append('Growth Rate of ',indicator1);
+    growthratedisplay=append('Case Growth Rate in ',indicator1);
     disp(growthratedisplay)
     disp(growthrate)
     state=0;
 end
+
 title('COVID 19 Country Analysis in log scale','FontSize', 24)
 xlabel('Total Cases','FontSize', 20)
 ylabel('Average New Cases','FontSize', 20)
