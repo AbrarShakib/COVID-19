@@ -9,17 +9,13 @@ countrynum=length(country);
 state=0;
 for n=1:countrynum
     for i=2:shape1(1,1)
-        if state==0
-            if country(n)==string(table2array(result(i,2)))
+        if state==0 && country(n)==string(table2array(result(i,2)))
                 country1=i;
                 dummy1=i;
                 state=state+1;
-            end
-        else
-            if country(n)==string(table2array(result(i,2)))
-                dummy2=i;
-                state=state+1;
-            end
+        elseif country(n)==string(table2array(result(i,2)))
+               dummy2=i;
+               state=state+1;    
         end
     end
     if state>1
@@ -59,7 +55,7 @@ for n=1:countrynum
     disp(growthrate)
     state=0;
 end
-
+grid on
 title('COVID 19 Country Analysis in log scale','FontSize', 24)
 xlabel('Total Cases','FontSize', 20)
 ylabel('Average New Cases','FontSize', 20)
@@ -67,4 +63,4 @@ timeindicator1=table2array(result(1,period));
 timeindicator2='Last Updated: ';
 timeindicator=append(timeindicator2,timeindicator1);
 text(10^2,10^4,timeindicator,'FontSize',15)
-legend(country,'Location',"best")
+legend(country,'Location','southeast')
