@@ -7,6 +7,9 @@ shape1=size(result);
 country={'China','Italy','US','Germany','United Kingdom','India','Spain','Iran','Korea, South','France','Bangladesh','Pakistan','Qatar','Japan'};
 countrynum=length(country);
 state=0;
+countcountrygood=1;
+countcountrybad=1;
+countcountrysame=1;
 for n=1:countrynum
     for i=2:shape1(1,1)
         if state==0 && country(n)==string(table2array(result(i,2)))
@@ -49,12 +52,61 @@ for n=1:countrynum
     text(totalcasesinaweek(loopcount),averagenewcasesinaweek(loopcount),indicator,'FontSize',12)
     hold on
     length3=length(averagenewcasesinaweek);
-    growthrate=averagenewcasesinaweek(length3)/averagenewcasesinaweek(length3-1);
-    growthratedisplay=append('Case Growth Rate in ',indicator1);
-    disp(growthratedisplay)
-    disp(growthrate)
+    growthratetoday=averagenewcasesinaweek(length3)/averagenewcasesinaweek(length3-1);
+    growthratedisplay=append('Case Growth Rate(Today) in ',indicator1);
+    %disp(growthratedisplay)
+    %disp(growthratetoday)
+    growthrateyesterday=averagenewcasesinaweek(length3-1)/averagenewcasesinaweek(length3-2);
+    growthratedisplay=append('Case Growth Rate(Yesterday) in ',indicator1);
+    %disp(growthratedisplay)
+    %disp(growthrateyesterday)
+    growthrateereyesterday=averagenewcasesinaweek(length3-2)/averagenewcasesinaweek(length3-3);
+    growthratedisplay=append('Case Growth Rate(Ereyesterday) in ',indicator1);
+    %disp(growthratedisplay)
+    %disp(growthrateereyesterday)
+    if growthratetoday<growthrateyesterday && growthrateyesterday<growthrateereyesterday
+        situationdisplay1=append('\nSituation is getting good in ',indicator1);
+        situationdisplay1=append(situationdisplay1,'\n');
+        fprintf(2,situationdisplay1)
+        getting_good(countcountrygood,1)=append(country(n),append(' - Growth Rate = ',num2str(growthratetoday)));
+        countcountrygood=countcountrygood+1;
+    elseif growthratetoday>growthrateyesterday && growthrateyesterday>growthrateereyesterday
+        situationdisplay2=append('\nSituation is getting bad in ',indicator1);
+        situationdisplay2=append(situationdisplay2,'\n');
+        fprintf(2,situationdisplay2)
+        getting_bad(countcountrybad,1)=append(country(n),append(' - Growth Rate = ',num2str(growthratetoday)));
+        countcountrybad=countcountrybad+1;
+    else
+        situationdisplay3=append('\nSituation is same as previous in ',indicator1);
+        situationdisplay3=append(situationdisplay3,'\n');
+        fprintf(2,situationdisplay3)
+        same_situation(countcountrysame,1)=append(country(n),append(' - Growth Rate = ',num2str(growthratetoday)));
+        countcountrysame=countcountrysame+1;
+    end
     state=0;
 end
+if length(getting_good)>=length(getting_bad) && length(getting_good)>=length(same_situation)
+    longestarray=length(getting_good);
+elseif length(getting_bad)>=length(same_situation)
+    longestarray=length(getting_bad);
+else
+    longestarray=length(same_situation);
+end
+dummy5={getting_good,getting_bad,same_situation};
+for i=1:3
+    if length(dummy5{i})<longestarray
+       emptyrows=longestarray-length(dummy5{i});
+       emptyvalue=num2cell(nan(emptyrows,1));
+       if i==1
+           getting_good=[getting_good;emptyvalue];
+       elseif i==2
+           getting_bad=[getting_bad;emptyvalue];
+       else
+           same_situation=[same_situation;emptyvalue];
+       end
+    end
+end
+situationtable=table(getting_good,getting_bad,same_situation)
 grid on
 title('COVID 19 Country Analysis in log scale','FontSize', 24)
 xlabel('Total Cases','FontSize', 20)
