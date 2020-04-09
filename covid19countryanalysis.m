@@ -10,6 +10,9 @@ state=0;
 countcountrygood=1;
 countcountrybad=1;
 countcountrysame=1;
+getting_good={};
+getting_bad={};
+same_situation={};
 for n=1:countrynum
     for i=2:shape1(1,1)
         if state==0 && country(n)==string(table2array(result(i,2)))
@@ -28,7 +31,7 @@ for n=1:countrynum
         end
     end
     increment=6;
-    loopcount=floor((shape1(1,2)-4)/6);
+    loopcount=floor((shape1(1,2)-5)/6);
     date=(shape1(1,2)-loopcount*increment)-increment;
     for i=1:loopcount
         date=date+increment;
