@@ -1,5 +1,3 @@
-clear all
-clc
 disp('Requesting data from internet')
 result=webread('https://data.humdata.org/hxlproxy/api/data-preview.csv?url=https%3A%2F%2Fraw.githubusercontent.com%2FCSSEGISandData%2FCOVID-19%2Fmaster%2Fcsse_covid_19_data%2Fcsse_covid_19_time_series%2Ftime_series_covid19_confirmed_global.csv&filename=time_series_covid19_confirmed_global.csv','options','table');
 disp('Data recieved')
@@ -33,15 +31,19 @@ countgood2=1;
 countgooddummy2=1;
 countgood3=1;
 countgooddummy3=1;
+countrecovered3=1;
 countcountrygood=1;
 countcountrybad=1;
 countcountrysame=1;
+countcountryrecovered=1;
 getting_good={};
 getting_bad={};
 same_situation={};
+recovered={};
 rowsgood1=[];
 rowsgood2=[];
 rowsgood3=[];
+rowsrecovered3=[];
 disp('Analyzing all country')
 for n=1:countrynum
     for i=2:shape1(1,1)
@@ -98,8 +100,8 @@ for n=1:countrynum
         getting_good(countcountrygood,1)=append(country(n),append(' - Growth Rate = ',num2str(growthratetoday)));
         countcountrygood=countcountrygood+1;
         if growthratetoday<=1
-            rowsgood1(countgood1)=countgooddummy1;
-            countgood1=countgood1+1;
+           rowsgood1(countgood1)=countgooddummy1;
+           countgood1=countgood1+1;
         end
         countgooddummy1=countgooddummy1+1; 
     elseif growthratetoday>growthrateyesterday && growthrateyesterday>growthrateereyesterday
@@ -109,33 +111,41 @@ for n=1:countrynum
         getting_bad(countcountrybad,1)=append(country(n),append(' - Growth Rate = ',num2str(growthratetoday)));
         countcountrybad=countcountrybad+1;
         if growthratetoday<=1
-                    rowsgood2(countgood2)=countgooddummy2;
-                    countgood2=countgood2+1;
+           rowsgood2(countgood2)=countgooddummy2;
+           countgood2=countgood2+1;
         end
         countgooddummy2=countgooddummy2+1;
+    elseif growthratetoday==inf
+           situationdisplay3=append('\nNo one infected in ',indicator1);
+           situationdisplay3=append(situationdisplay3,'\n');
+           %fprintf(2,situationdisplay3)
+           recovered(countcountryrecovered,1)=append(country(n),append(' - Growth Rate = ',num2str(growthratetoday)));
+           countcountryrecovered=countcountryrecovered+1;
     else
-        situationdisplay3=append('\nSituation is same as previous in ',indicator1);
-        situationdisplay3=append(situationdisplay3,'\n');
-        %fprintf(2,situationdisplay3)
+        situationdisplay4=append('\nSituation is same as previous in ',indicator1);
+        situationdisplay4=append(situationdisplay4,'\n');
+        %fprintf(2,situationdisplay4)
         same_situation(countcountrysame,1)=append(country(n),append(' - Growth Rate = ',num2str(growthratetoday)));
         countcountrysame=countcountrysame+1;
         if growthratetoday<=1
-                    rowsgood3(countgood3)=countgooddummy3;
-                    countgood3=countgood3+1;
+           rowsgood3(countgood3)=countgooddummy3;
+           countgood3=countgood3+1;
         end
         countgooddummy3=countgooddummy3+1;
     end
     state=0;
 end
-if length(getting_good)>=length(getting_bad) && length(getting_good)>=length(same_situation)
+if length(getting_good)>=length(getting_bad) && length(getting_good)>=length(same_situation) && length(getting_good)>=length(recovered)
     longestarray=length(getting_good);
-elseif length(getting_bad)>=length(same_situation)
+elseif length(getting_bad)>=length(same_situation) && length(getting_bad)>=length(recovered)
     longestarray=length(getting_bad);
-else
+elseif length(same_situation)>=length(recovered)
     longestarray=length(same_situation);
+else
+    longestarray=length(recovered);
 end
-dummy5={getting_good,getting_bad,same_situation};
-for i=1:3
+dummy5={getting_good,getting_bad,same_situation,recovered};
+for i=1:4
     if length(dummy5{i})<longestarray
        emptyrows=longestarray-length(dummy5{i});
        emptyvalue=num2cell(nan(emptyrows,1));
@@ -143,38 +153,41 @@ for i=1:3
            getting_good=[getting_good;emptyvalue];
        elseif i==2
            getting_bad=[getting_bad;emptyvalue];
-       else
+       elseif i==3
            same_situation=[same_situation;emptyvalue];
+       else
+           recovered=[recovered;emptyvalue];
        end
     end
 end
 disp('Analysis done')
 disp('Result is loading in table')
-situationtable=table(getting_good,getting_bad,same_situation);
+situationtable=table(getting_good,getting_bad,same_situation,recovered);
 fig = uifigure;
 uit = uitable(fig,'Data',situationtable);
-s = uistyle('BackgroundColor','green');
-
+s1 = uistyle('BackgroundColor','green');
 
 if ~isempty(rowsgood1)
     length4=length(rowsgood1);
     columngood1=ones(1,length4);
-    addStyle(uit,s,'cell',[rowsgood1',columngood1']);
+    addStyle(uit,s1,'cell',[rowsgood1',columngood1']);
 end
 
 
 if ~isempty(rowsgood2)
     length5=length(rowsgood2);
     columngood2=2*ones(1,length5);
-    addStyle(uit,s,'cell',[rowsgood2',columngood2']);
+    addStyle(uit,s1,'cell',[rowsgood2',columngood2']);
 end
 
 
 if ~isempty(rowsgood3)
     length6=length(rowsgood3);
     columngood3=3*ones(1,length6);
-    addStyle(uit,s,'cell',[rowsgood3',columngood3']);
+    addStyle(uit,s1,'cell',[rowsgood3',columngood3']);
 end
+
+
 disp('If a cell turns green which indicates that the infection rate is decreasing')
 timeindicator1=table2array(result(1,period));
 timeindicator2='Last Updated: ';
