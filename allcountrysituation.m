@@ -36,6 +36,7 @@ countcountrygood=1;
 countcountrybad=1;
 countcountrysame=1;
 countcountryrecovered=1;
+countsuddenbad3=1;
 getting_good={};
 getting_bad={};
 same_situation={};
@@ -44,6 +45,7 @@ rowsgood1=[];
 rowsgood2=[];
 rowsgood3=[];
 rowsrecovered3=[];
+rowssuddenbad3=[];
 disp('Analyzing all country')
 for n=1:countrynum
     for i=2:shape1(1,1)
@@ -130,6 +132,9 @@ for n=1:countrynum
         if growthratetoday<=1
            rowsgood3(countgood3)=countgooddummy3;
            countgood3=countgood3+1;
+        elseif growthratetoday>1 && growthrateyesterday<=1 && growthrateereyesterday<=1 
+               rowssuddenbad3(countsuddenbad3)=countgooddummy3;
+               countsuddenbad3=countsuddenbad3+1;
         end
         countgooddummy3=countgooddummy3+1;
     end
@@ -166,6 +171,7 @@ situationtable=table(getting_good,getting_bad,same_situation,recovered);
 fig = uifigure;
 uit = uitable(fig,'Data',situationtable);
 s1 = uistyle('BackgroundColor','green');
+s2 = uistyle('BackgroundColor','red','FontColor','white');
 
 if ~isempty(rowsgood1)
     length4=length(rowsgood1);
@@ -188,7 +194,15 @@ if ~isempty(rowsgood3)
 end
 
 
+if ~isempty(rowssuddenbad3)
+    length7=length(rowssuddenbad3);
+    columngood3=3*ones(1,length7);
+    addStyle(uit,s2,'cell',[rowssuddenbad3',columngood3']);
+end
+
+
 disp('If a cell turns green which indicates that the infection rate is decreasing')
+disp('If a cell turns red which indicates that previously the infection rate was decreasing now suddenly it is increasing badly')
 timeindicator1=table2array(result(1,period));
 timeindicator2='Last Updated: ';
 timeindicator=append(timeindicator2,timeindicator1);
