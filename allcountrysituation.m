@@ -117,7 +117,7 @@ for n=1:countrynum
            countgood2=countgood2+1;
         end
         countgooddummy2=countgooddummy2+1;
-    elseif growthratetoday==inf
+    elseif ismissing(growthratetoday)
            situationdisplay3=append('\nNo one infected in ',indicator1);
            situationdisplay3=append(situationdisplay3,'\n');
            %fprintf(2,situationdisplay3)
@@ -132,7 +132,7 @@ for n=1:countrynum
         if growthratetoday<=1
            rowsgood3(countgood3)=countgooddummy3;
            countgood3=countgood3+1;
-        elseif growthratetoday>1 && growthrateyesterday<=1 && growthrateereyesterday<=1 
+        elseif growthratetoday>1 && growthrateyesterday<=1 && growthrateereyesterday<=1 && growthratetoday~=inf 
                rowssuddenbad3(countsuddenbad3)=countgooddummy3;
                countsuddenbad3=countsuddenbad3+1;
         end
