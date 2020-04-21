@@ -132,7 +132,7 @@ for n=1:countrynum
         if growthratetoday<=1
            rowsgood3(countgood3)=countgooddummy3;
            countgood3=countgood3+1;
-        elseif growthratetoday>1 && growthrateyesterday<=1 && growthrateereyesterday<=1 && growthratetoday~=inf 
+        elseif growthratetoday>=2 && growthrateyesterday<=1 && growthrateereyesterday<=1 && growthratetoday~=inf 
                rowssuddenbad3(countsuddenbad3)=countgooddummy3;
                countsuddenbad3=countsuddenbad3+1;
         end
